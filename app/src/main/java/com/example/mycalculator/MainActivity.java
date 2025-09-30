@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn_clear, btn_plus, btn_minus, btn_equal, btn_mul, btn_div, btn_dot;
+    Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn_clear,
+            btn_plus, btn_minus, btn_equal, btn_mul, btn_div, btn_dot;
     TextView text_display;
 
     // This is to evaluate the math expression
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        btn0 = (Button) findViewById(R.id.btn0);
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
         btn3 = (Button) findViewById(R.id.btn3);
@@ -48,8 +49,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setClickListeners() {
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
+        btn3.setOnClickListener(this);
+        btn4.setOnClickListener(this);
+        btn5.setOnClickListener(this);
+        btn6.setOnClickListener(this);
+        btn7.setOnClickListener(this);
+        btn8.setOnClickListener(this);
+        btn9.setOnClickListener(this);
+        btn0.setOnClickListener(this);
         btn_plus.setOnClickListener(this);
         btn_equal.setOnClickListener(this);
+        btn_minus.setOnClickListener(this);
+        btn_mul.setOnClickListener(this);
+        btn_div.setOnClickListener(this);
+        btn_dot.setOnClickListener(this);
         btn_clear.setOnClickListener(this);
     }
 
