@@ -10,7 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
-
+import java.math.RoundingMode;
+import java.util.Stack;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_minus = (Button) findViewById(R.id.btn_minus);
         btn_mul = (Button) findViewById(R.id.btn_mul);
         btn_div = (Button) findViewById(R.id.btn_div);
+        btn_dot = (Button) findViewById(R.id.btn_dot);
         btn_equal = (Button) findViewById(R.id.btn_equal);
         btn_clear = (Button) findViewById(R.id.btn_clear);
         text_display = (TextView) findViewById(R.id.textview_input_display);
@@ -69,14 +71,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn0:
+                addNumber("0");
+                break;
             case R.id.btn1:
                 addNumber("1");
                 break;
             case R.id.btn2:
                 addNumber("2");
                 break;
+            case R.id.btn3:
+                addNumber("3");
+                break;
+            case R.id.btn4:
+                addNumber("4");
+                break;
+            case R.id.btn5:
+                addNumber("5");
+                break;
+            case R.id.btn6:
+                addNumber("6");
+                break;
+            case R.id.btn7:
+                addNumber("7");
+                break;
+            case R.id.btn8:
+                addNumber("8");
+                break;
+            case R.id.btn9:
+                addNumber("9");
+                break;
             case R.id.btn_plus:
                 addNumber("+");
+                break;
+            case R.id.btn_minus:
+                addNumber("-");
+                break;
+            case R.id.btn_mul:
+                addNumber("*");
+                break;
+            case R.id.btn_div:
+                addNumber("/");
+                break;
+            case R.id.btn_dot:
+                addNumber(".");
                 break;
             case R.id.btn_equal:
                 String result = null;
@@ -93,10 +131,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String evaluate(String expression) throws Exception {
-        String result = evaluate(expression);
-        BigDecimal decimal = new BigDecimal(result);
-        return decimal.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+    private String evaluate(String text) throws Exception {
+        Character op = '+';
+        text = text + "+";
+        System.out.println("text " + text);
+        StringBuilder n = new StringBuilder();
+        BigDecimal result = BigDecimal.ZERO;
+        Stack<BigDecimal> numbers = new Stack<>();
+        for (int i = 0; i < text.length(); i++) {
+            Character item = text.charAt(i);
+            System.out.println("char at "+ i + ": " + item);
+            if (Character.isDigit(item) || item == '.') {
+                n = n.append(item);
+                continue;
+            }
+
+            // To account for negative operations (e.g "5*-2", 5/-2)
+            if (i < text.length() - 1 && (!Character.isDigit(text.charAt(i-1)) || i == 0)) {
+                if (item == '-') {
+                    n = n.append(item);
+                    continue;
+                }
+            }
+
+            if (!Character.isDigit(item)) {
+                BigDecimal num = BigDecimal.ZERO;
+                if (n.length() > 0) {
+                    num = new BigDecimal(n.toString());
+                    System.out.println("num " + num);
+                    n.setLength(0);
+                }
+
+                switch (op) {
+                    case '+':
+                        numbers.push(num);
+                        break;
+                    case '-':
+                        numbers.push(num.negate());
+                        break;
+                    case '*':
+                        numbers.push(num.multiply((BigDecimal) numbers.pop()));
+                        break;
+                    case '/':
+                        if (num == BigDecimal.ZERO) {
+                            throw new ArithmeticException("Division by zero");
+                        }
+                        BigDecimal first = (BigDecimal) numbers.pop();
+                        numbers.push(first.divide(num, 10, RoundingMode.HALF_UP));
+                }
+                op = item;
+            }
+        }
+
+        for (BigDecimal no : numbers) {
+            result = result.add(no);
+        }
+        return result.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
     }
 
     private void addNumber(String number) {
